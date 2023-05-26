@@ -13,7 +13,7 @@ type IUser interface {
 	Insert(user *model.User) (userId int64, err error)
 }
 
-const defaultUserDB = "*"
+const defaultUserDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
 
 type UserRepository struct {
 	myGormConn *gorm.DB
