@@ -36,5 +36,11 @@ func main() {
 	ginServer.POST("/signIn", controllerUser.PostSignIn)
 	ginServer.GET("/signOut", controllerUser.GetSignOut)
 
+	controllerTrial := controller.TrialController{}
+	groupTrial := ginServer.Group("trial")
+	{
+		groupTrial.GET("ask", controllerTrial.GetAsk)
+	}
+
 	ginServer.Run(":9990")
 }
