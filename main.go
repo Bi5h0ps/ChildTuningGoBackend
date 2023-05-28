@@ -39,7 +39,7 @@ func main() {
 	controllerTrial := controller.TrialController{}
 	groupTrial := ginServer.Group("trial")
 	{
-		groupTrial.GET("ask", controllerTrial.GetAsk)
+		groupTrial.POST("ask", controllerTrial.GetAsk)
 	}
 
 	ginServer.Run(":9990")
