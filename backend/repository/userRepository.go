@@ -13,7 +13,7 @@ type IUser interface {
 	Insert(user *model.User) (userId int64, err error)
 }
 
-const defaultUserDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
+const defaultUserDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
 
 type UserRepository struct {
 	myGormConn *gorm.DB
@@ -39,7 +39,7 @@ func (u *UserRepository) Select(username string) (user *model.User, err error) {
 	}
 	user = &model.User{}
 	if result := u.myGormConn.Where("username", username).First(user); result.Error != nil {
-		return nil, err
+		return nil, result.Error
 	}
 	return
 }

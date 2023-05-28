@@ -47,9 +47,19 @@ func (c *UserController) PostSignIn(ctx *gin.Context) {
 		})
 		return
 	}
+	//check if user exists
+	_, err := c.UserService.GetUserByUsername(userCredentials.Username)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"msg":  "Incorrect username or password, please try again!",
+			"data": nil,
+		})
+		return
+	}
+	//check if user password matches with database record
 	user, isOk := c.UserService.IsPwdSuccess(userCredentials.Username, userCredentials.Password)
 	if !isOk {
-		ctx.JSON(http.StatusOK, gin.H{
+		ctx.JSON(http.StatusBadRequest, gin.H{
 			"msg":  "Incorrect username or password, please try again!",
 			"data": nil,
 		})
