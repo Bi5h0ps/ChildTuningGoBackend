@@ -13,6 +13,8 @@ type IUser interface {
 	Insert(user *model.User) (userId int64, err error)
 }
 
+//const defaultUserDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
+
 const defaultUserDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
 
 type UserRepository struct {
@@ -51,10 +53,7 @@ func (u *UserRepository) Insert(user *model.User) (userId int64, err error) {
 	//not allowed to set user id
 	user.ID = 0
 	//check if user already exists
-	checkUser, err := u.Select(user.Username)
-	if err != nil {
-		return
-	}
+	checkUser, _ := u.Select(user.Username)
 	if checkUser != nil {
 		//user already exist
 		return 0, errors.New("Username already exists!")
@@ -62,7 +61,7 @@ func (u *UserRepository) Insert(user *model.User) (userId int64, err error) {
 	if result := u.myGormConn.Create(user); result.Error != nil {
 		return 0, result.Error
 	}
-	return user.ID, err
+	return user.ID, nil
 }
 
 func NewUserRepository(db *gorm.DB) IUser {
