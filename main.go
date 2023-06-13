@@ -40,6 +40,7 @@ func main() {
 	groupTrial := ginServer.Group("trial")
 	{
 		groupTrial.POST("ask", controllerTrial.PostAsk)
+		groupTrial.POST("exercise", controllerTrial.PostRandomQuiz)
 	}
 
 	ginServer.Run(":9990")
