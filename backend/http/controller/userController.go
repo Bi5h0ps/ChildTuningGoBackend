@@ -106,3 +106,30 @@ func saveChatHistory(isClient bool, username, msg string, s service.IChatService
 		}
 	}
 }
+
+func (c *UserController) GetChatHistory(ctx *gin.Context) {
+	//user info should be stored in the context by the auth middleware
+	username := ctx.GetString("username")
+	if username == "" {
+		errorHandling(http.StatusBadRequest, "User not signed in, middleware uncaught error", ctx)
+		return
+	}
+	//username ok, get user chat history from database
+	data, err := c.ChatService.GetChatHistoryByUsername(username)
+	if err != nil {
+		errorHandling(http.StatusBadRequest, "Failed to retrieve chaat history", ctx)
+		return
+	}
+	dataTrimed := make([]model.ChatHistoryResponse, 0)
+	for _, v := range data {
+		dataTrimed = append(dataTrimed, model.ChatHistoryResponse{
+			Name:    v.Name,
+			Message: v.Message,
+			IsSelf:  v.IsSelf,
+		})
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg":  "",
+		"data": dataTrimed,
+	})
+}

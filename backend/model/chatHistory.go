@@ -10,3 +10,9 @@ type ChatHistory struct {
 	IsSelf     bool      `json:"isSelf" gorm:"column:isSelf"`
 	CreateTime time.Time `json:"create_time" gorm:"column:create_time"`
 }
+
+type ChatHistoryResponse struct {
+	Name    string `json:"name"`
+	Message string `json:"msg"`
+	IsSelf  bool   `json:"isSelf"`
+}

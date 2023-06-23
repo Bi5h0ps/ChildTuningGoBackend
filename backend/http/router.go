@@ -57,7 +57,7 @@ func (r *Router) StartServer() {
 	groupUser := r.ginServer.Group("user")
 	groupUser.Use(middleware.RequireAuth(serviceUser))
 	{
-		groupUser.GET("/askingHistory")
+		groupUser.GET("/askingHistory", controllerChat.GetChatHistory)
 		groupUser.POST("/ask", controllerChat.PostAsk)
 	}
 

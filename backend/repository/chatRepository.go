@@ -12,7 +12,7 @@ type IChat interface {
 	Insert(chatHistory *model.ChatHistory) (recordId int64, err error)
 }
 
-const defaultChatHistoryDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
+const defaultChatHistoryDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
 //const defaultChatHistoryDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
 
