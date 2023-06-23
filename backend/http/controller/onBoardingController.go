@@ -10,11 +10,11 @@ import (
 	"time"
 )
 
-type UserController struct {
+type OnBoardingController struct {
 	UserService service.IUserService
 }
 
-func (c *UserController) PostSignUp(ctx *gin.Context) {
+func (c *OnBoardingController) PostSignUp(ctx *gin.Context) {
 	var user *model.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -38,7 +38,7 @@ func (c *UserController) PostSignUp(ctx *gin.Context) {
 	return
 }
 
-func (c *UserController) PostSignIn(ctx *gin.Context) {
+func (c *OnBoardingController) PostSignIn(ctx *gin.Context) {
 	var userCredentials *model.UserLogin
 	if err := ctx.ShouldBindJSON(&userCredentials); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -94,7 +94,7 @@ func (c *UserController) PostSignIn(ctx *gin.Context) {
 	return
 }
 
-func (c *UserController) GetSignOut(ctx *gin.Context) {
+func (c *OnBoardingController) GetSignOut(ctx *gin.Context) {
 	cookie, err := ctx.Cookie("Authorization")
 	if err != nil || cookie == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{
