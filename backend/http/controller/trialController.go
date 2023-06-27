@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"mime/multipart"
 	"net/http"
+	"strconv"
 )
 
 type TrialController struct{}
@@ -87,8 +88,7 @@ func (c *TrialController) PostRandomQuiz(ctx *gin.Context) {
 		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
 		return
 	}
-	//TODO hard coded to 1
-	err = writer.WriteField("questionCount", "1")
+	err = writer.WriteField("questionCount", strconv.Itoa(randomQuizBody.QuestionCount))
 	if err != nil {
 		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
 		return
