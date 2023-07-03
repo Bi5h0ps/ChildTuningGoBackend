@@ -23,7 +23,10 @@ const (
 )
 
 func (c *UserController) PostAsk(ctx *gin.Context) {
-	var questionBody *model.AskBody
+	questionBody := map[string]string{
+		"questionId": "",
+		"question":   "",
+	}
 	//user info should be stored in the context by the auth middleware
 	username := ctx.GetString("username")
 	if username == "" {
@@ -34,7 +37,7 @@ func (c *UserController) PostAsk(ctx *gin.Context) {
 		errorHandling(http.StatusBadRequest, err.Error(), ctx)
 		return
 	}
-	saveChatHistory(true, username, questionBody.Question, c.ChatService)
+	saveChatHistory(questionBody["questionId"], true, username, questionBody["question"], c.ChatService)
 
 	url := "http://18.163.79.71:5000/api"
 	// Create a new multipart/form-data payload
@@ -42,7 +45,7 @@ func (c *UserController) PostAsk(ctx *gin.Context) {
 	writer := multipart.NewWriter(body)
 
 	// Add form field "input_msg"
-	err := writer.WriteField("input_msg", questionBody.Question)
+	err := writer.WriteField("input_msg", questionBody["question"])
 	if err != nil {
 		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
 		return
@@ -75,15 +78,18 @@ func (c *UserController) PostAsk(ctx *gin.Context) {
 		return
 	} else {
 		ctx.JSON(http.StatusOK, gin.H{
-			"msg":  response.Message,
-			"data": response.Content,
+			"msg": response.Message,
+			"data": map[string]string{
+				"questionId": questionBody["questionId"],
+				"answer":     response.Content,
+			},
 		})
-		saveChatHistory(false, username, response.Content, c.ChatService)
+		saveChatHistory(questionBody["questionId"], false, username, response.Content, c.ChatService)
 		return
 	}
 }
 
-func saveChatHistory(isClient bool, username, msg string, s service.IChatService) {
+func saveChatHistory(questionId string, isClient bool, username, msg string, s service.IChatService) {
 	//write chat history to database
 	var tag string
 	if isClient {
@@ -92,14 +98,15 @@ func saveChatHistory(isClient bool, username, msg string, s service.IChatService
 		tag = TAG_GPT
 	}
 	history := model.ChatHistory{
-		ID:         0,
+		QuestionId: questionId,
 		Username:   username,
 		Name:       tag,
 		Message:    msg,
 		IsSelf:     isClient,
 		CreateTime: time.Now(),
+		IsFavorite: false,
 	}
-	_, err := s.WriteChatHistory(&history)
+	err := s.WriteChatHistory(&history)
 	if err != nil {
 		if err != nil {
 			log.Default().Println(err.Error())
@@ -117,15 +124,17 @@ func (c *UserController) GetChatHistory(ctx *gin.Context) {
 	//username ok, get user chat history from database
 	data, err := c.ChatService.GetChatHistoryByUsername(username)
 	if err != nil {
-		errorHandling(http.StatusBadRequest, "Failed to retrieve chaat history", ctx)
+		errorHandling(http.StatusBadRequest, "Failed to retrieve chat history", ctx)
 		return
 	}
-	dataTrimed := make([]model.ChatHistoryResponse, 0)
+	dataTrimed := make([]map[string]interface{}, 0)
 	for _, v := range data {
-		dataTrimed = append(dataTrimed, model.ChatHistoryResponse{
-			Name:    v.Name,
-			Message: v.Message,
-			IsSelf:  v.IsSelf,
+		dataTrimed = append(dataTrimed, map[string]interface{}{
+			"questionId": v.QuestionId,
+			"name":       v.Name,
+			"msg":        v.Message,
+			"isSelf":     v.IsSelf,
+			"isFavorite": v.IsFavorite,
 		})
 	}
 	ctx.JSON(http.StatusOK, gin.H{

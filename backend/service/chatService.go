@@ -7,7 +7,7 @@ import (
 
 type IChatService interface {
 	GetChatHistoryByUsername(username string) ([]model.ChatHistory, error)
-	WriteChatHistory(history *model.ChatHistory) (recordId int64, err error)
+	WriteChatHistory(history *model.ChatHistory) (err error)
 }
 
 type ChatService struct {
@@ -18,7 +18,7 @@ func (c *ChatService) GetChatHistoryByUsername(username string) ([]model.ChatHis
 	return c.ChatRepo.Select(username)
 }
 
-func (c *ChatService) WriteChatHistory(history *model.ChatHistory) (recordId int64, err error) {
+func (c *ChatService) WriteChatHistory(history *model.ChatHistory) (err error) {
 	return c.ChatRepo.Insert(history)
 }
 

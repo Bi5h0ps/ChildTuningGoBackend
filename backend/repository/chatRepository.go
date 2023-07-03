@@ -9,12 +9,12 @@ import (
 type IChat interface {
 	Conn() error
 	Select(userName string) (chatHistory []model.ChatHistory, err error)
-	Insert(chatHistory *model.ChatHistory) (recordId int64, err error)
+	Insert(chatHistory *model.ChatHistory) (err error)
 }
 
-//const defaultChatHistoryDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
+const defaultChatHistoryDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
-const defaultChatHistoryDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
+//const defaultChatHistoryDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
 type ChatRepository struct {
 	myGormConn *gorm.DB
@@ -47,15 +47,15 @@ func (c *ChatRepository) Select(username string) (chatHistory []model.ChatHistor
 	return chatHistoryList, nil
 }
 
-func (c *ChatRepository) Insert(history *model.ChatHistory) (recordId int64, err error) {
+func (c *ChatRepository) Insert(history *model.ChatHistory) (err error) {
 	if err = c.Conn(); err != nil {
 		return
 	}
 	history.ID = 0
 	if result := c.myGormConn.Create(history); result.Error != nil {
-		return 0, result.Error
+		return result.Error
 	}
-	return history.ID, nil
+	return nil
 }
 
 func NewChatRepository(db *gorm.DB) IChat {

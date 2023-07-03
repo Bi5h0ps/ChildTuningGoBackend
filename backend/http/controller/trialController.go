@@ -13,7 +13,9 @@ import (
 type TrialController struct{}
 
 func (c *TrialController) PostAsk(ctx *gin.Context) {
-	var questionBody *model.AskBody
+	questionBody := map[string]string{
+		"question": "",
+	}
 	if err := ctx.ShouldBindJSON(&questionBody); err != nil {
 		errorHandling(http.StatusBadRequest, err.Error(), ctx)
 		return
@@ -25,7 +27,7 @@ func (c *TrialController) PostAsk(ctx *gin.Context) {
 	writer := multipart.NewWriter(body)
 
 	// Add form field "input_msg"
-	err := writer.WriteField("input_msg", questionBody.Question)
+	err := writer.WriteField("input_msg", questionBody["question"])
 	if err != nil {
 		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
 		return

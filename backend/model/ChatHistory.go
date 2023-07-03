@@ -3,12 +3,14 @@ package model
 import "time"
 
 type ChatHistory struct {
-	ID         int64     `json:"id" form:"ID" gorm:"primaryKey;autoIncrement;column:ID"`
-	Username   string    `json:"username" gorm:"primaryKey;column:username"`
-	Name       string    `json:"name" gorm:"column:name"`
-	Message    string    `json:"msg" gorm:"column:msg"`
-	IsSelf     bool      `json:"isSelf" gorm:"column:isSelf"`
-	CreateTime time.Time `json:"create_time" gorm:"column:create_time"`
+	ID         int64     `gorm:"primaryKey;autoIncrement;column:ID"`
+	QuestionId string    `gorm:"column:question_id"`
+	Username   string    `gorm:"column:username"`
+	Name       string    `gorm:"column:name"`
+	Message    string    `gorm:"column:msg"`
+	IsSelf     bool      `gorm:"column:isSelf"`
+	CreateTime time.Time `gorm:"column:create_time"`
+	IsFavorite bool      `gorm:"column:is_favorite"`
 }
 
 type ChatHistoryResponse struct {
