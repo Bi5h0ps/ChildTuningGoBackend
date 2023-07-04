@@ -12,9 +12,9 @@ type IChat interface {
 	Insert(chatHistory *model.ChatHistory) (err error)
 }
 
-const defaultChatHistoryDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
+//const defaultChatHistoryDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
-//const defaultChatHistoryDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
+const defaultChatHistoryDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
 type ChatRepository struct {
 	myGormConn *gorm.DB

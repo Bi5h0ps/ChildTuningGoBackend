@@ -13,9 +13,9 @@ type IExHistoryRepository interface {
 	Insert(exHistory *model.ExerciseHistory) (err error)
 }
 
-const defaultExerciseDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
+//const defaultExerciseDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
-//const defaultUserDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
+const defaultExerciseDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
 type ExHistoryRepository struct {
 	myGormConn *gorm.DB
