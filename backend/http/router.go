@@ -54,12 +54,20 @@ func (r *Router) StartServer() {
 	repoChat := repository.NewChatRepository(nil)
 	serviceChat := service.NewChatService(repoChat)
 	controllerUser := controller.UserController{ChatService: serviceChat}
+
+	repoExerciseHistory := repository.NewExHistoryRepository(nil)
+	serviceExHistory := service.NewExHistoryService(repoExerciseHistory)
+	controllerExHistory := controller.ExHistoryController{ExerciseService: serviceExHistory}
+
 	groupUser := r.ginServer.Group("user")
 	groupUser.Use(middleware.RequireAuth(serviceUser))
 	{
 		groupUser.GET("/askingHistory", controllerUser.GetChatHistory)
 		groupUser.POST("/ask", controllerUser.PostAsk)
+
 		groupUser.POST("/exercise/normal/get", controllerUser.PostUserRandomQuiz)
+		groupUser.POST("/exercise/normal/do", controllerExHistory.PostExerciseDo)
+		groupUser.GET("/exercise/history", controllerExHistory.GetExerciseHistory)
 	}
 
 	r.ginServer.Run(":9990")
