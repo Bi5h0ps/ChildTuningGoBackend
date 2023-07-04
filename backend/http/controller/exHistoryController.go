@@ -71,7 +71,8 @@ func (c *ExHistoryController) GetExerciseHistory(ctx *gin.Context) {
 		data := []map[string]interface{}{}
 		for _, v := range historyList {
 			data = append(data, map[string]interface{}{
-				"exerciseId":   v.ExerciseId,
+				//TODO add logic here to determine which id for using
+				"id":           v.ExerciseId,
 				"origin":       v.Origin,
 				"is_favorite":  v.IsFavorite,
 				"question":     v.Question,
