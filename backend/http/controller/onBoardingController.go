@@ -39,7 +39,10 @@ func (c *OnBoardingController) PostSignUp(ctx *gin.Context) {
 }
 
 func (c *OnBoardingController) PostSignIn(ctx *gin.Context) {
-	var userCredentials *model.UserLogin
+	userCredentials := map[string]string{
+		"username": "",
+		"password": "",
+	}
 	if err := ctx.ShouldBindJSON(&userCredentials); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"msg":  err.Error(),
@@ -48,7 +51,7 @@ func (c *OnBoardingController) PostSignIn(ctx *gin.Context) {
 		return
 	}
 	//check if user exists
-	_, err := c.UserService.GetUserByUsername(userCredentials.Username)
+	_, err := c.UserService.GetUserByUsername(userCredentials["username"])
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"msg":  "Incorrect username or password, please try again!",
@@ -57,7 +60,7 @@ func (c *OnBoardingController) PostSignIn(ctx *gin.Context) {
 		return
 	}
 	//check if user password matches with database record
-	user, isOk := c.UserService.IsPwdSuccess(userCredentials.Username, userCredentials.Password)
+	user, isOk := c.UserService.IsPwdSuccess(userCredentials["username"], userCredentials["password"])
 	if !isOk {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"msg":  "Incorrect username or password, please try again!",

@@ -67,7 +67,11 @@ func (c *TrialController) PostAsk(ctx *gin.Context) {
 }
 
 func (c *TrialController) PostRandomQuiz(ctx *gin.Context) {
-	var randomQuizBody *model.RandomQuizRequest
+	randomQuizBody := map[string]string{
+		"difficulty":    "",
+		"type":          "",
+		"questionCount": "",
+	}
 	if err := ctx.ShouldBindJSON(&randomQuizBody); err != nil {
 		errorHandling(http.StatusBadRequest, err.Error(), ctx)
 		return
@@ -79,17 +83,17 @@ func (c *TrialController) PostRandomQuiz(ctx *gin.Context) {
 	writer := multipart.NewWriter(body)
 
 	// Add form field "input_msg"
-	err := writer.WriteField("difficulty", randomQuizBody.Difficulty)
+	err := writer.WriteField("difficulty", randomQuizBody["difficulty"])
 	if err != nil {
 		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
 		return
 	}
-	err = writer.WriteField("type", randomQuizBody.QuestionType)
+	err = writer.WriteField("type", randomQuizBody["type"])
 	if err != nil {
 		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
 		return
 	}
-	err = writer.WriteField("questionCount", randomQuizBody.QuestionCount)
+	err = writer.WriteField("questionCount", randomQuizBody["questionCount"])
 	if err != nil {
 		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
 		return

@@ -8,7 +8,7 @@ type RandomQuizResponse struct {
 }
 
 type Quiz struct {
-	QuestionId  string   `json:"qId"`
+	ExerciseId  string   `json:"exerciseId"`
 	Question    string   `json:"question"`
 	Choices     []string `json:"choices"`
 	Answer      string   `json:"answer"`

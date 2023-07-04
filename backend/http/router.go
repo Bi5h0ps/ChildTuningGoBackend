@@ -53,12 +53,13 @@ func (r *Router) StartServer() {
 
 	repoChat := repository.NewChatRepository(nil)
 	serviceChat := service.NewChatService(repoChat)
-	controllerChat := controller.UserController{ChatService: serviceChat}
+	controllerUser := controller.UserController{ChatService: serviceChat}
 	groupUser := r.ginServer.Group("user")
 	groupUser.Use(middleware.RequireAuth(serviceUser))
 	{
-		groupUser.GET("/askingHistory", controllerChat.GetChatHistory)
-		groupUser.POST("/ask", controllerChat.PostAsk)
+		groupUser.GET("/askingHistory", controllerUser.GetChatHistory)
+		groupUser.POST("/ask", controllerUser.PostAsk)
+		groupUser.POST("/exercise/normal/get", controllerUser.PostUserRandomQuiz)
 	}
 
 	r.ginServer.Run(":9990")

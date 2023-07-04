@@ -3,10 +3,9 @@ package model
 import "time"
 
 type ExerciseHistory struct {
-	ID           int64     `gorm:"primaryKey;autoIncrement;column:ID"`
+	ExerciseId   string    `gorm:"primaryKey;column:exercise_id"`
 	Username     string    `gorm:"column:username"`
 	Origin       string    `gorm:"column:origin"`
-	ExerciseId   int64     `gorm:"column:exercise_id"`
 	IsFavorite   bool      `gorm:"column:is_favorite"`
 	DerivationId int64     `gorm:"column:derivation_id"`
 	Question     string    `gorm:"column:question"`
