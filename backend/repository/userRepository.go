@@ -2,9 +2,8 @@ package repository
 
 import (
 	"ChildTuningGoBackend/backend/model"
+	"ChildTuningGoBackend/backend/provider"
 	"errors"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 type IUser interface {
@@ -13,26 +12,11 @@ type IUser interface {
 	Insert(user *model.User) (userId int64, err error)
 }
 
-const defaultUserDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
-
-//const defaultUserDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?charset=utf8"
-
-type UserRepository struct {
-	myGormConn *gorm.DB
-}
+type UserRepository struct{}
 
 func (u *UserRepository) Conn() (err error) {
-	if u.myGormConn == nil {
-		u.myGormConn, err = gorm.Open(mysql.Open(defaultUserDB), &gorm.Config{})
-		if err != nil {
-			return
-		}
-		err = u.myGormConn.AutoMigrate(&model.User{})
-		if err != nil {
-			return
-		}
-	}
-	return nil
+	err = provider.DatabaseEngine.AutoMigrate(&model.User{})
+	return
 }
 
 func (u *UserRepository) Select(username string) (user *model.User, err error) {
@@ -40,7 +24,7 @@ func (u *UserRepository) Select(username string) (user *model.User, err error) {
 		return
 	}
 	user = &model.User{}
-	if result := u.myGormConn.Where("username", username).First(user); result.Error != nil {
+	if result := provider.DatabaseEngine.Where("username", username).First(user); result.Error != nil {
 		return nil, result.Error
 	}
 	return
@@ -58,12 +42,12 @@ func (u *UserRepository) Insert(user *model.User) (userId int64, err error) {
 		//user already exist
 		return 0, errors.New("Username already exists!")
 	}
-	if result := u.myGormConn.Create(user); result.Error != nil {
+	if result := provider.DatabaseEngine.Create(user); result.Error != nil {
 		return 0, result.Error
 	}
 	return user.ID, nil
 }
 
-func NewUserRepository(db *gorm.DB) IUser {
-	return &UserRepository{myGormConn: db}
+func NewUserRepository() IUser {
+	return &UserRepository{}
 }

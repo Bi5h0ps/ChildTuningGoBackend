@@ -2,8 +2,7 @@ package repository
 
 import (
 	"ChildTuningGoBackend/backend/model"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"ChildTuningGoBackend/backend/provider"
 )
 
 type IExHistoryRepository interface {
@@ -13,26 +12,11 @@ type IExHistoryRepository interface {
 	Insert(exHistory *model.ExerciseHistory) (err error)
 }
 
-const defaultExerciseDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
-
-//const defaultExerciseDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
-
-type ExHistoryRepository struct {
-	myGormConn *gorm.DB
-}
+type ExHistoryRepository struct{}
 
 func (u *ExHistoryRepository) Conn() (err error) {
-	if u.myGormConn == nil {
-		u.myGormConn, err = gorm.Open(mysql.Open(defaultExerciseDB), &gorm.Config{})
-		if err != nil {
-			return
-		}
-		err = u.myGormConn.AutoMigrate(&model.ExerciseHistory{})
-		if err != nil {
-			return
-		}
-	}
-	return nil
+	err = provider.DatabaseEngine.AutoMigrate(&model.ExerciseHistory{})
+	return
 }
 
 func (u *ExHistoryRepository) Select(exerciseId string) (exHistory *model.ExerciseHistory, err error) {
@@ -40,7 +24,7 @@ func (u *ExHistoryRepository) Select(exerciseId string) (exHistory *model.Exerci
 		return
 	}
 	exHistory = &model.ExerciseHistory{}
-	if result := u.myGormConn.Where("exerciseId", exerciseId).First(exHistory); result.Error != nil {
+	if result := provider.DatabaseEngine.Where("exerciseId", exerciseId).First(exHistory); result.Error != nil {
 		return nil, result.Error
 	}
 	return
@@ -51,7 +35,7 @@ func (u *ExHistoryRepository) SelectAll(username string) (exHistories []model.Ex
 		return
 	}
 	var exerciseHistoryList []model.ExerciseHistory
-	result := u.myGormConn.Where("username = ?", username).Order("create_time DESC").Find(&exerciseHistoryList)
+	result := provider.DatabaseEngine.Where("username = ?", username).Order("create_time DESC").Find(&exerciseHistoryList)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -62,12 +46,12 @@ func (u *ExHistoryRepository) Insert(exHistory *model.ExerciseHistory) (err erro
 	if err = u.Conn(); err != nil {
 		return
 	}
-	if result := u.myGormConn.Create(exHistory); result.Error != nil {
+	if result := provider.DatabaseEngine.Create(exHistory); result.Error != nil {
 		return result.Error
 	}
 	return nil
 }
 
-func NewExHistoryRepository(db *gorm.DB) IExHistoryRepository {
-	return &ExHistoryRepository{myGormConn: db}
+func NewExHistoryRepository() IExHistoryRepository {
+	return &ExHistoryRepository{}
 }

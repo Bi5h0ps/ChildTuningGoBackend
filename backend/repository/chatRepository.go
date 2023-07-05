@@ -2,8 +2,7 @@ package repository
 
 import (
 	"ChildTuningGoBackend/backend/model"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"ChildTuningGoBackend/backend/provider"
 )
 
 type IChat interface {
@@ -12,26 +11,11 @@ type IChat interface {
 	Insert(chatHistory *model.ChatHistory) (err error)
 }
 
-const defaultChatHistoryDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
-
-//const defaultChatHistoryDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
-
-type ChatRepository struct {
-	myGormConn *gorm.DB
-}
+type ChatRepository struct{}
 
 func (c *ChatRepository) Conn() (err error) {
-	if c.myGormConn == nil {
-		c.myGormConn, err = gorm.Open(mysql.Open(defaultChatHistoryDB), &gorm.Config{})
-		if err != nil {
-			return
-		}
-		err = c.myGormConn.AutoMigrate(&model.ChatHistory{})
-		if err != nil {
-			return
-		}
-	}
-	return nil
+	err = provider.DatabaseEngine.AutoMigrate(&model.ChatHistory{})
+	return
 }
 
 func (c *ChatRepository) Select(username string) (chatHistory []model.ChatHistory, err error) {
@@ -40,7 +24,7 @@ func (c *ChatRepository) Select(username string) (chatHistory []model.ChatHistor
 	}
 	var chatHistoryList []model.ChatHistory
 	// Retrieve records from the "users" table with a specific username
-	result := c.myGormConn.Where("username = ?", username).Order("create_time ASC").Find(&chatHistoryList)
+	result := provider.DatabaseEngine.Where("username = ?", username).Order("create_time ASC").Find(&chatHistoryList)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -52,12 +36,12 @@ func (c *ChatRepository) Insert(history *model.ChatHistory) (err error) {
 		return
 	}
 	history.ID = 0
-	if result := c.myGormConn.Create(history); result.Error != nil {
+	if result := provider.DatabaseEngine.Create(history); result.Error != nil {
 		return result.Error
 	}
 	return nil
 }
 
-func NewChatRepository(db *gorm.DB) IChat {
-	return &ChatRepository{myGormConn: db}
+func NewChatRepository() IChat {
+	return &ChatRepository{}
 }

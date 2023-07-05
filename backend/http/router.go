@@ -37,7 +37,7 @@ func (r *Router) StartServer() {
 		c.Next()
 	})
 
-	repoUser := repository.NewUserRepository(nil)
+	repoUser := repository.NewUserRepository()
 	serviceUser := service.NewUserService(repoUser)
 	controllerOnBoarding := controller.OnBoardingController{UserService: serviceUser}
 	r.ginServer.POST("/signUp", controllerOnBoarding.PostSignUp)
@@ -51,11 +51,11 @@ func (r *Router) StartServer() {
 		groupTrial.POST("exercise", controllerTrial.PostRandomQuiz)
 	}
 
-	repoChat := repository.NewChatRepository(nil)
+	repoChat := repository.NewChatRepository()
 	serviceChat := service.NewChatService(repoChat)
 	controllerUser := controller.UserController{ChatService: serviceChat}
 
-	repoExerciseHistory := repository.NewExHistoryRepository(nil)
+	repoExerciseHistory := repository.NewExHistoryRepository()
 	serviceExHistory := service.NewExHistoryService(repoExerciseHistory)
 	controllerExHistory := controller.ExHistoryController{ExerciseService: serviceExHistory}
 
