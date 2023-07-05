@@ -12,9 +12,9 @@ type IChat interface {
 	Insert(chatHistory *model.ChatHistory) (err error)
 }
 
-//const defaultChatHistoryDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
+const defaultChatHistoryDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
-const defaultChatHistoryDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
+//const defaultChatHistoryDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
 type ChatRepository struct {
 	myGormConn *gorm.DB
@@ -40,7 +40,7 @@ func (c *ChatRepository) Select(username string) (chatHistory []model.ChatHistor
 	}
 	var chatHistoryList []model.ChatHistory
 	// Retrieve records from the "users" table with a specific username
-	result := c.myGormConn.Where("username = ?", username).Find(&chatHistoryList)
+	result := c.myGormConn.Where("username = ?", username).Order("create_time ASC").Find(&chatHistoryList)
 	if result.Error != nil {
 		return nil, result.Error
 	}

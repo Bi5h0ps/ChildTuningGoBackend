@@ -104,7 +104,7 @@ func saveChatHistory(questionId string, isClient bool, username, msg string, s s
 		Name:       tag,
 		Message:    msg,
 		IsSelf:     isClient,
-		CreateTime: time.Now(),
+		CreateTime: time.Now().Format("2006-01-02 15:04:05"),
 		IsFavorite: false,
 	}
 	err := s.WriteChatHistory(&history)

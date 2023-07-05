@@ -41,7 +41,7 @@ func (c *ExHistoryController) PostExerciseDo(ctx *gin.Context) {
 		Answer:       requestPayload.Answer,
 		AnswerIndex:  requestPayload.AnswerIndex,
 		Analysis:     requestPayload.Analysis,
-		CreateTime:   time.Now(),
+		CreateTime:   time.Now().Format("2006-01-02 15:04:05"),
 		IsDoneRight:  requestPayload.IsDoneRight,
 	}
 	err := c.ExerciseService.SaveExHistory(&exerciseHistory)

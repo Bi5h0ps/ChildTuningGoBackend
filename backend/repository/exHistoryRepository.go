@@ -13,9 +13,9 @@ type IExHistoryRepository interface {
 	Insert(exHistory *model.ExerciseHistory) (err error)
 }
 
-//const defaultExerciseDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
+const defaultExerciseDB = "root:Nmdhj2e2d@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
-const defaultExerciseDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
+//const defaultExerciseDB = "root:Password2023!@tcp(127.0.0.1:3306)/childTuningDB?parseTime=true"
 
 type ExHistoryRepository struct {
 	myGormConn *gorm.DB
@@ -51,7 +51,7 @@ func (u *ExHistoryRepository) SelectAll(username string) (exHistories []model.Ex
 		return
 	}
 	var exerciseHistoryList []model.ExerciseHistory
-	result := u.myGormConn.Where("username = ?", username).Find(&exerciseHistoryList)
+	result := u.myGormConn.Where("username = ?", username).Order("create_time DESC").Find(&exerciseHistoryList)
 	if result.Error != nil {
 		return nil, result.Error
 	}
