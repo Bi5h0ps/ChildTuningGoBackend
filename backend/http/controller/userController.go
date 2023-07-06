@@ -15,12 +15,14 @@ import (
 )
 
 type UserController struct {
-	ChatService service.IChatService
+	ChatService     service.IChatService
+	FavoriteService service.IFavoriteService
 }
 
 const (
-	TAG_ME  = "me"
-	TAG_GPT = "VT"
+	TAG_ME     = "me"
+	TAG_GPT    = "VT"
+	TAG_ASKING = "asking"
 )
 
 func (c *UserController) PostAsk(ctx *gin.Context) {
@@ -215,4 +217,65 @@ func (c *UserController) PostUserRandomQuiz(ctx *gin.Context) {
 		})
 		return
 	}
+}
+
+func (c *UserController) PostFavoriteQuestion(ctx *gin.Context) {
+	payload := map[string]string{
+		"questionId": "",
+	}
+	username := ctx.GetString("username")
+	if username == "" {
+		errorHandling(http.StatusBadRequest, "User not signed in, middleware uncaught error", ctx)
+		return
+	}
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	pair, err := c.ChatService.GetChatHistoryByQuestionId(payload["questionId"])
+	if err != nil {
+		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
+		return
+	} else if len(pair) == 0 {
+		errorHandling(http.StatusInternalServerError, "QuestionId does not exists", ctx)
+		return
+	}
+	var question string
+	var analysis string
+	if pair[0].Name == TAG_ME {
+		question = pair[0].Message
+		analysis = pair[1].Message
+	} else {
+		question = pair[1].Message
+		analysis = pair[0].Message
+	}
+	err = c.ChatService.FavoriteChatHistory(payload["questionId"])
+	if err != nil {
+		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
+		return
+	}
+	favoriteBase := &model.Favorite{
+		Username:      username,
+		Origin:        TAG_ASKING,
+		OriginId:      payload["questionId"],
+		Question:      question,
+		Choices:       "",
+		Answer:        "",
+		AnswerIndex:   0,
+		Analysis:      analysis,
+		HasDerivation: false,
+		CreateTime:    time.Now().Format("2006-01-02 15:04:05"),
+		IsDeleted:     false,
+	}
+	err = c.FavoriteService.FavoriteAsking(favoriteBase)
+	if err != nil {
+		//TODO rollback the changes made on chat history
+		errorHandling(http.StatusInternalServerError, err.Error(), ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg":  "",
+		"data": nil,
+	})
+	return
 }

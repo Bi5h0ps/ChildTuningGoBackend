@@ -53,7 +53,9 @@ func (r *Router) StartServer() {
 
 	repoChat := repository.NewChatRepository()
 	serviceChat := service.NewChatService(repoChat)
-	controllerUser := controller.UserController{ChatService: serviceChat}
+	repoFavorite := repository.NewFavoriteRepository()
+	serviceFavorite := service.NewFavoriteService(repoFavorite)
+	controllerUser := controller.UserController{ChatService: serviceChat, FavoriteService: serviceFavorite}
 
 	repoExerciseHistory := repository.NewExHistoryRepository()
 	serviceExHistory := service.NewExHistoryService(repoExerciseHistory)
@@ -64,6 +66,7 @@ func (r *Router) StartServer() {
 	{
 		groupUser.GET("/askingHistory", controllerUser.GetChatHistory)
 		groupUser.POST("/ask", controllerUser.PostAsk)
+		groupUser.POST("/user/ask/mark", controllerUser.PostFavoriteQuestion)
 
 		groupUser.POST("/exercise/normal/get", controllerUser.PostUserRandomQuiz)
 		groupUser.POST("/exercise/normal/do", controllerExHistory.PostExerciseDo)
