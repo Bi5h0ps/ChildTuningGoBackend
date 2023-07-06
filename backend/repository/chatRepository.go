@@ -3,6 +3,7 @@ package repository
 import (
 	"ChildTuningGoBackend/backend/model"
 	"ChildTuningGoBackend/backend/provider"
+	"strings"
 )
 
 type IChat interface {
@@ -37,7 +38,7 @@ func (c *ChatRepository) SelectByQuestionId(questionId string) (pair []model.Cha
 	if err = c.Conn(); err != nil {
 		return
 	}
-	result := provider.DatabaseEngine.Where("questionId = ?", questionId).Find(&pair)
+	result := provider.DatabaseEngine.Where("question_id = ?", questionId).Find(&pair)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -56,6 +57,9 @@ func (c *ChatRepository) Insert(history *model.ChatHistory) (err error) {
 }
 
 func (c *ChatRepository) Save(chatHistory *model.ChatHistory) {
+	s := strings.ReplaceAll(chatHistory.CreateTime, "T", " ")
+	s = s[:len(s)-1]
+	chatHistory.CreateTime = s
 	provider.DatabaseEngine.Save(chatHistory)
 }
 

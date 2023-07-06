@@ -5,6 +5,7 @@ import (
 	"ChildTuningGoBackend/backend/provider"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type IFavoriteRepository interface {
@@ -70,15 +71,14 @@ func (f *FavoriteRepository) MarkFavorite(isNormal bool, body *model.Favorite) (
 	}
 	tuple, selectionError := f.Select(isNormal, body.OriginId)
 	if selectionError != nil {
-		return selectionError
-	}
-	if tuple == nil {
 		insertError := f.Insert(body)
 		if insertError != nil {
 			return insertError
 		}
 	} else {
 		tuple.IsDeleted = false
+		s := tuple.CreateTime[:len(tuple.CreateTime)-1]
+		tuple.CreateTime = strings.ReplaceAll(s, "T", " ")
 		writeBack := provider.DatabaseEngine.Save(&tuple)
 		if writeBack.Error != nil {
 			return writeBack.Error

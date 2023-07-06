@@ -66,7 +66,7 @@ func (r *Router) StartServer() {
 	{
 		groupUser.GET("/askingHistory", controllerUser.GetChatHistory)
 		groupUser.POST("/ask", controllerUser.PostAsk)
-		groupUser.POST("/user/ask/mark", controllerUser.PostFavoriteQuestion)
+		groupUser.POST("/ask/mark", controllerUser.PostFavoriteQuestion)
 
 		groupUser.POST("/exercise/normal/get", controllerUser.PostUserRandomQuiz)
 		groupUser.POST("/exercise/normal/do", controllerExHistory.PostExerciseDo)
