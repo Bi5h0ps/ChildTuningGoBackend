@@ -279,3 +279,32 @@ func (c *UserController) PostFavoriteQuestion(ctx *gin.Context) {
 	})
 	return
 }
+
+func (c *UserController) PostUnFavoriteQuestion(ctx *gin.Context) {
+	payload := map[string]string{
+		"questionId": "",
+	}
+	username := ctx.GetString("username")
+	if username == "" {
+		errorHandling(http.StatusBadRequest, "User not signed in, middleware uncaught error", ctx)
+		return
+	}
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	err := c.ChatService.UnFavoriteChatHistory(payload["questionId"])
+	if err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	err = c.FavoriteService.RemoveAskingFavorite(payload["questionId"])
+	if err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg":  "",
+		"data": nil,
+	})
+}

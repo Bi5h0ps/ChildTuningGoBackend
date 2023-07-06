@@ -4,6 +4,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"strings"
 )
 
 var HttpClientProvider HttpClient
@@ -20,4 +21,9 @@ func init() {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
+}
+
+func FixTimeFormat(input string) string {
+	s := input[:len(input)-1]
+	return strings.ReplaceAll(s, "T", " ")
 }

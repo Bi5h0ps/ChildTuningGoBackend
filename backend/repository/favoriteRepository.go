@@ -3,9 +3,6 @@ package repository
 import (
 	"ChildTuningGoBackend/backend/model"
 	"ChildTuningGoBackend/backend/provider"
-	"errors"
-	"fmt"
-	"strings"
 )
 
 type IFavoriteRepository interface {
@@ -54,10 +51,8 @@ func (f *FavoriteRepository) DeleteById(isNormal bool, id string) (err error) {
 	if selectionError != nil {
 		return selectionError
 	}
-	if tuple == nil {
-		return errors.New(fmt.Sprintf("No matching with id = %v", id))
-	}
 	tuple.IsDeleted = true
+	tuple.CreateTime = provider.FixTimeFormat(tuple.CreateTime)
 	writeBack := provider.DatabaseEngine.Save(&tuple)
 	if writeBack.Error != nil {
 		return writeBack.Error
@@ -77,8 +72,7 @@ func (f *FavoriteRepository) MarkFavorite(isNormal bool, body *model.Favorite) (
 		}
 	} else {
 		tuple.IsDeleted = false
-		s := tuple.CreateTime[:len(tuple.CreateTime)-1]
-		tuple.CreateTime = strings.ReplaceAll(s, "T", " ")
+		tuple.CreateTime = provider.FixTimeFormat(tuple.CreateTime)
 		writeBack := provider.DatabaseEngine.Save(&tuple)
 		if writeBack.Error != nil {
 			return writeBack.Error
