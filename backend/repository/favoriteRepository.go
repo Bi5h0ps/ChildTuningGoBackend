@@ -11,6 +11,7 @@ type IFavoriteRepository interface {
 	Insert(favorite *model.Favorite) (err error)
 	DeleteById(isNormal bool, id string) (err error)
 	MarkFavorite(isNormal bool, body *model.Favorite) (err error)
+	SelectAll(username string) (result []model.Favorite, err error)
 }
 
 type FavoriteRepository struct{}
@@ -31,6 +32,17 @@ func (f *FavoriteRepository) Select(isNormal bool, id string) (result *model.Fav
 		return nil, selection.Error
 	}
 	return &tuple, nil
+}
+
+func (f *FavoriteRepository) SelectAll(username string) (result []model.Favorite, err error) {
+	selection := provider.DatabaseEngine.Where(map[string]interface{}{"username": username, "is_deleted": false}).Order("create_time DESC").Find(&result)
+	if selection.Error != nil {
+		return nil, selection.Error
+	}
+	for i, _ := range result {
+		result[i].CreateTime = provider.FixTimeFormat(result[i].CreateTime)
+	}
+	return
 }
 
 func (f *FavoriteRepository) Insert(favorite *model.Favorite) (err error) {

@@ -10,6 +10,7 @@ type IFavoriteService interface {
 	FavoriteExercise(favorite *model.Favorite) error
 	RemoveAskingFavorite(questionId string) error
 	RemoveExerciseFavorite(exerciseId string) error
+	GetFavoriteList(username string) (result []model.Favorite, err error)
 }
 
 type FavoriteService struct {
@@ -34,6 +35,10 @@ func (f *FavoriteService) RemoveAskingFavorite(questionId string) error {
 func (f *FavoriteService) RemoveExerciseFavorite(exerciseId string) error {
 	err := f.FavoriteRepository.DeleteById(true, exerciseId)
 	return err
+}
+
+func (f *FavoriteService) GetFavoriteList(username string) (result []model.Favorite, err error) {
+	return f.FavoriteRepository.SelectAll(username)
 }
 
 func NewFavoriteService(favoriteRepo repository.IFavoriteRepository) IFavoriteService {

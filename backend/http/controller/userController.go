@@ -308,3 +308,20 @@ func (c *UserController) PostUnFavoriteQuestion(ctx *gin.Context) {
 		"data": nil,
 	})
 }
+
+func (c *UserController) GetFavorite(ctx *gin.Context) {
+	username := ctx.GetString("username")
+	if username == "" {
+		errorHandling(http.StatusBadRequest, "User not signed in, middleware uncaught error", ctx)
+		return
+	}
+	favoriteList, err := c.FavoriteService.GetFavoriteList(username)
+	if err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg":  "",
+		"data": favoriteList,
+	})
+}

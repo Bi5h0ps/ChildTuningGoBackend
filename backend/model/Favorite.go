@@ -1,16 +1,16 @@
 package model
 
 type Favorite struct {
-	ID            int64  `gorm:"primaryKey;autoIncrement;column:id"`
-	Username      string `gorm:"column:username"`
-	Origin        string `gorm:"column:origin"` //"normal" or "asking"
-	OriginId      string `gorm:"column:origin_id"`
-	Question      string `gorm:"column:question"`
-	Choices       string `gorm:"column:choices"`
-	Answer        string `gorm:"column:answer"`
-	AnswerIndex   int    `gorm:"column:answer_index"`
-	Analysis      string `gorm:"column:analysis"`
-	HasDerivation bool   `gorm:"column:has_derivation"`
-	CreateTime    string `gorm:"column:create_time;type:timestamp"`
+	ID            int64  `json:"-" gorm:"primaryKey;autoIncrement;column:id"`
+	Username      string `json:"-" gorm:"column:username"`
+	Origin        string `json:"-" gorm:"column:origin"` //"normal" or "asking"
+	OriginId      string `json:"id" gorm:"column:origin_id"`
+	Question      string `json:"question" gorm:"column:question"`
+	Choices       string `json:"choices" gorm:"column:choices"`
+	Answer        string `json:"answer" gorm:"column:answer"`
+	AnswerIndex   int    `json:"answer_index" gorm:"column:answer_index"`
+	Analysis      string `json:"analysis" gorm:"column:analysis"`
+	HasDerivation bool   `json:"has_derivation" gorm:"column:has_derivation"`
+	CreateTime    string `json:"create_time" gorm:"column:create_time;type:timestamp"`
 	IsDeleted     bool   `gorm:"column:is_deleted"`
 }
