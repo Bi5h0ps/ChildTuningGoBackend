@@ -3,7 +3,7 @@ package model
 type Favorite struct {
 	ID            int64  `json:"-" gorm:"primaryKey;autoIncrement;column:id"`
 	Username      string `json:"-" gorm:"column:username"`
-	Origin        string `json:"-" gorm:"column:origin"` //"normal" or "asking"
+	Origin        string `json:"origin" gorm:"column:origin"` //"normal" or "asking"
 	OriginId      string `json:"id" gorm:"column:origin_id"`
 	Question      string `json:"question" gorm:"column:question"`
 	Choices       string `json:"choices" gorm:"column:choices"`
