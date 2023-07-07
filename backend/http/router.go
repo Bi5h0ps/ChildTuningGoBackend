@@ -59,7 +59,8 @@ func (r *Router) StartServer() {
 
 	repoExerciseHistory := repository.NewExHistoryRepository()
 	serviceExHistory := service.NewExHistoryService(repoExerciseHistory)
-	controllerExHistory := controller.ExHistoryController{ExerciseService: serviceExHistory}
+	controllerExHistory := controller.ExHistoryController{ExerciseService: serviceExHistory,
+		FavoriteSerivce: serviceFavorite}
 
 	groupUser := r.ginServer.Group("user")
 	groupUser.Use(middleware.RequireAuth(serviceUser))
@@ -72,6 +73,8 @@ func (r *Router) StartServer() {
 		groupUser.POST("/exercise/normal/get", controllerUser.PostUserRandomQuiz)
 		groupUser.POST("/exercise/normal/do", controllerExHistory.PostExerciseDo)
 		groupUser.GET("/exercise/history", controllerExHistory.GetExerciseHistory)
+		groupUser.POST("/exercise/normal/mark", controllerExHistory.PostFavoriteExercise)
+		groupUser.POST("/exercise/normal/unmark", controllerExHistory.PostFavoriteExercise)
 	}
 
 	r.ginServer.Run(":9990")

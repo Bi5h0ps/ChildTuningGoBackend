@@ -9,6 +9,7 @@ type IExHistoryService interface {
 	SaveExHistory(history *model.ExerciseHistory) error
 	GetExeHistoriesByUsername(username string) ([]model.ExerciseHistory, error)
 	GetExHistoryById(exerciseId string) (*model.ExerciseHistory, error)
+	SaveExHistoryUpdate(history *model.ExerciseHistory)
 }
 
 type ExHistoryService struct {
@@ -25,6 +26,10 @@ func (e *ExHistoryService) GetExeHistoriesByUsername(username string) (histories
 
 func (e *ExHistoryService) GetExHistoryById(exerciseId string) (*model.ExerciseHistory, error) {
 	return e.ExerciseRepository.Select(exerciseId)
+}
+
+func (e *ExHistoryService) SaveExHistoryUpdate(history *model.ExerciseHistory) {
+	e.ExerciseRepository.Save(history)
 }
 
 func NewExHistoryService(exHistoryRepo repository.IExHistoryRepository) IExHistoryService {

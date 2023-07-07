@@ -10,6 +10,7 @@ type IExHistoryRepository interface {
 	Select(exerciseId string) (exHistory *model.ExerciseHistory, err error)
 	SelectAll(userId string) (exHistories []model.ExerciseHistory, err error)
 	Insert(exHistory *model.ExerciseHistory) (err error)
+	Save(exHistory *model.ExerciseHistory)
 }
 
 type ExHistoryRepository struct{}
@@ -24,7 +25,7 @@ func (u *ExHistoryRepository) Select(exerciseId string) (exHistory *model.Exerci
 		return
 	}
 	exHistory = &model.ExerciseHistory{}
-	if result := provider.DatabaseEngine.Where("exerciseId", exerciseId).First(exHistory); result.Error != nil {
+	if result := provider.DatabaseEngine.Where("exercise_id", exerciseId).First(exHistory); result.Error != nil {
 		return nil, result.Error
 	}
 	return
@@ -50,6 +51,11 @@ func (u *ExHistoryRepository) Insert(exHistory *model.ExerciseHistory) (err erro
 		return result.Error
 	}
 	return nil
+}
+
+func (u *ExHistoryRepository) Save(exHistory *model.ExerciseHistory) {
+	exHistory.CreateTime = provider.FixTimeFormat(exHistory.CreateTime)
+	provider.DatabaseEngine.Save(exHistory)
 }
 
 func NewExHistoryRepository() IExHistoryRepository {

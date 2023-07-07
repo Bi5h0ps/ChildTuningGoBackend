@@ -11,6 +11,7 @@ import (
 
 type ExHistoryController struct {
 	ExerciseService service.IExHistoryService
+	FavoriteSerivce service.IFavoriteService
 }
 
 const (
@@ -89,4 +90,77 @@ func (c *ExHistoryController) GetExerciseHistory(ctx *gin.Context) {
 			"data": data,
 		})
 	}
+}
+
+func (c *ExHistoryController) PostFavoriteExercise(ctx *gin.Context) {
+	//user info should be stored in the context by the auth middleware
+	username := ctx.GetString("username")
+	if username == "" {
+		errorHandling(http.StatusBadRequest, "User not signed in, middleware uncaught error", ctx)
+		return
+	}
+	payload := map[string]string{
+		"exerciseId": "",
+	}
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	exHistory, err := c.ExerciseService.GetExHistoryById(payload["exerciseId"])
+	if err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	exHistory.IsFavorite = true
+	c.ExerciseService.SaveExHistoryUpdate(exHistory)
+	exFavorite := &model.Favorite{
+		ID:            0,
+		Username:      username,
+		Origin:        TAG_NORMAL,
+		OriginId:      payload["exerciseId"],
+		Question:      exHistory.Question,
+		Choices:       exHistory.Choices,
+		Answer:        exHistory.Answer,
+		AnswerIndex:   exHistory.AnswerIndex,
+		Analysis:      exHistory.Analysis,
+		HasDerivation: false,
+		CreateTime:    time.Now().Format("2006-01-02 15:04:05"),
+		IsDeleted:     false,
+	}
+	err = c.FavoriteSerivce.FavoriteExercise(exFavorite)
+	if err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg":  "",
+		"data": nil,
+	})
+	return
+}
+
+func (c *ExHistoryController) PostUnFavoriteExercise(ctx *gin.Context) {
+	//user info should be stored in the context by the auth middleware
+	username := ctx.GetString("username")
+	if username == "" {
+		errorHandling(http.StatusBadRequest, "User not signed in, middleware uncaught error", ctx)
+		return
+	}
+	payload := map[string]string{
+		"exerciseId": "",
+	}
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	err := c.FavoriteSerivce.RemoveExerciseFavorite(payload["exerciseId"])
+	if err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg":  "",
+		"data": nil,
+	})
+	return
 }
