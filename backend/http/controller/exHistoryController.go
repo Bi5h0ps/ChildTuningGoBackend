@@ -153,7 +153,14 @@ func (c *ExHistoryController) PostUnFavoriteExercise(ctx *gin.Context) {
 		errorHandling(http.StatusBadRequest, err.Error(), ctx)
 		return
 	}
-	err := c.FavoriteSerivce.RemoveExerciseFavorite(payload["exerciseId"])
+	exHistory, err := c.ExerciseService.GetExHistoryById(payload["exerciseId"])
+	if err != nil {
+		errorHandling(http.StatusBadRequest, err.Error(), ctx)
+		return
+	}
+	exHistory.IsFavorite = false
+	c.ExerciseService.SaveExHistoryUpdate(exHistory)
+	err = c.FavoriteSerivce.RemoveExerciseFavorite(payload["exerciseId"])
 	if err != nil {
 		errorHandling(http.StatusBadRequest, err.Error(), ctx)
 		return

@@ -74,7 +74,7 @@ func (r *Router) StartServer() {
 		groupUser.POST("/exercise/normal/do", controllerExHistory.PostExerciseDo)
 		groupUser.GET("/exercise/history", controllerExHistory.GetExerciseHistory)
 		groupUser.POST("/exercise/normal/mark", controllerExHistory.PostFavoriteExercise)
-		groupUser.POST("/exercise/normal/unmark", controllerExHistory.PostFavoriteExercise)
+		groupUser.POST("/exercise/normal/unmark", controllerExHistory.PostUnFavoriteExercise)
 	}
 
 	r.ginServer.Run(":9990")
