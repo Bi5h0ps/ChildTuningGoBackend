@@ -12,12 +12,27 @@ type IFavoriteRepository interface {
 	DeleteById(isNormal bool, id string) (err error)
 	MarkFavorite(isNormal bool, body *model.Favorite) (err error)
 	SelectAll(username string) (result []model.Favorite, err error)
+	SelectById(id int) (result *model.Favorite, err error)
+	SaveFavoriteUpdate(favorite *model.Favorite)
 }
 
 type FavoriteRepository struct{}
 
 func (f *FavoriteRepository) Conn() (err error) {
 	err = provider.DatabaseEngine.AutoMigrate(&model.Favorite{})
+	return
+}
+
+func (f *FavoriteRepository) SaveFavoriteUpdate(favorite *model.Favorite) {
+	favorite.CreateTime = provider.FixTimeFormat(favorite.CreateTime)
+	provider.DatabaseEngine.Save(favorite)
+}
+
+func (f *FavoriteRepository) SelectById(id int) (result *model.Favorite, err error) {
+	selection := provider.DatabaseEngine.Where(map[string]interface{}{"ID": id}).First(&result)
+	if selection.Error != nil {
+		return nil, selection.Error
+	}
 	return
 }
 

@@ -55,10 +55,13 @@ func (r *Router) StartServer() {
 	serviceChat := service.NewChatService(repoChat)
 	repoFavorite := repository.NewFavoriteRepository()
 	serviceFavorite := service.NewFavoriteService(repoFavorite)
-	controllerUser := controller.UserController{ChatService: serviceChat, FavoriteService: serviceFavorite}
-
+	repoDerived := repository.NewDerivedRepository()
+	serviceDerived := service.NewDerivedService(repoDerived)
 	repoExerciseHistory := repository.NewExHistoryRepository()
 	serviceExHistory := service.NewExHistoryService(repoExerciseHistory)
+	controllerUser := controller.UserController{ChatService: serviceChat,
+		FavoriteService: serviceFavorite, DerivedService: serviceDerived, ExHistoryService: serviceExHistory}
+
 	controllerExHistory := controller.ExHistoryController{ExerciseService: serviceExHistory,
 		FavoriteSerivce: serviceFavorite}
 
@@ -76,6 +79,9 @@ func (r *Router) StartServer() {
 		groupUser.POST("/exercise/normal/mark", controllerExHistory.PostFavoriteExercise)
 		groupUser.POST("/exercise/normal/unmark", controllerExHistory.PostUnFavoriteExercise)
 		groupUser.GET("/exercise/favorite/get", controllerUser.GetFavorite)
+		groupUser.POST("/exercise/favorite/getDerivation", controllerUser.PostGetDerivation)
+		groupUser.POST("/exercise/favorite/regenerate", controllerUser.PostGenerateQuestion)
+		groupUser.POST("/exercise/derived/do", controllerUser.PostDerivedQuestionDo)
 	}
 
 	r.ginServer.Run(":9990")

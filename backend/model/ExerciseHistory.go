@@ -5,7 +5,7 @@ type ExerciseHistory struct {
 	Username     string `gorm:"column:username"`
 	Origin       string `gorm:"column:origin"`
 	IsFavorite   bool   `gorm:"column:is_favorite"`
-	DerivationId int64  `gorm:"column:derivation_id"`
+	DerivationId int    `gorm:"column:derivation_id"`
 	Question     string `gorm:"column:question"`
 	Choices      string `gorm:"column:string"`
 	Answer       string `gorm:"column:answer"`
