@@ -47,6 +47,7 @@ func (u *ExHistoryRepository) Insert(exHistory *model.ExerciseHistory) (err erro
 	if err = u.Conn(); err != nil {
 		return
 	}
+	exHistory.ID = 0
 	if result := provider.DatabaseEngine.Create(exHistory); result.Error != nil {
 		return result.Error
 	}

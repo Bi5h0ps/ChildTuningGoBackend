@@ -38,7 +38,7 @@ func (c *ExHistoryController) PostExerciseDo(ctx *gin.Context) {
 		IsFavorite:   false,
 		DerivationId: -1,
 		Question:     requestPayload.Question,
-		Choices:      strings.Join(requestPayload.Choices, "/"),
+		Choices:      strings.Join(requestPayload.Choices, "|"),
 		Answer:       requestPayload.Answer,
 		AnswerIndex:  requestPayload.AnswerIndex,
 		Analysis:     requestPayload.Analysis,
@@ -72,12 +72,11 @@ func (c *ExHistoryController) GetExerciseHistory(ctx *gin.Context) {
 		data := []map[string]interface{}{}
 		for _, v := range historyList {
 			data = append(data, map[string]interface{}{
-				//TODO add logic here to determine which id for using
-				"id":           v.ExerciseId,
+				"id":           v.ID,
 				"origin":       v.Origin,
 				"is_favorite":  v.IsFavorite,
 				"question":     v.Question,
-				"choices":      strings.Split(v.Choices, "/"),
+				"choices":      strings.Split(v.Choices, "|"),
 				"answer":       v.Answer,
 				"answer_index": v.AnswerIndex,
 				"analysis":     v.Analysis,

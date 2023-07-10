@@ -403,7 +403,7 @@ func (c *UserController) PostGenerateQuestion(ctx *gin.Context) {
 			Username:    username,
 			FavoriteId:  id,
 			Question:    response.Data[0].Question,
-			Choices:     strings.Join(response.Data[0].Choices, "/"),
+			Choices:     strings.Join(response.Data[0].Choices, "|"),
 			Answer:      response.Data[0].Answer,
 			AnswerIndex: response.Data[0].AnswerIndex,
 			Analysis:    response.Data[0].Analysis,
