@@ -517,12 +517,27 @@ func (c *UserController) PostGetDerivation(ctx *gin.Context) {
 		return
 	}
 	derivedList, err := c.DerivedService.GetAllDerived(username, id)
+	var result []map[string]interface{}
+	for _, v := range derivedList {
+		result = append(result, map[string]interface{}{
+			"id":           v.ID,
+			"favorite_id":  v.FavoriteId,
+			"question":     v.Question,
+			"choices":      strings.Split(v.Choices, "|"),
+			"answer":       v.Answer,
+			"answer_index": v.AnswerIndex,
+			"analysis":     v.Analysis,
+			"isDone":       v.IsDone,
+			"userChoice":   v.UserChoice,
+			"isDoneRight":  v.IsDoneRight,
+		})
+	}
 	if err != nil {
 		errorHandling(http.StatusBadRequest, err.Error(), ctx)
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg":  "",
-		"data": derivedList,
+		"data": result,
 	})
 }
