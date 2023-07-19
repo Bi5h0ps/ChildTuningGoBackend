@@ -76,7 +76,7 @@ func (c *TrialController) PostRandomQuiz(ctx *gin.Context) {
 		errorHandling(http.StatusBadRequest, err.Error(), ctx)
 		return
 	}
-	url := "http://18.163.79.71:5000/generate"
+	url := "http://18.163.79.71:5000/agenerate"
 
 	// Create a new multipart/form-data payload
 	body := &bytes.Buffer{}
