@@ -6,9 +6,9 @@ One should follow the following steps to deploy this project on the server.
 
 //preparing the database
 1. Create a database called childTuningDB first:
-mysql -u root -p
-CREATE DATABASE childTuningDB;
-exit
+"mysql -u root -p"
+"CREATE DATABASE childTuningDB;"
+"exit"
 
 2. Then use the sql dump on the database just created
 mysql -u root -p childTuningDB < childTuningDB.sql
