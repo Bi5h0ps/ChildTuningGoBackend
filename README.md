@@ -23,7 +23,7 @@ One should follow the following steps to deploy this project on the server.
 3. Run the following command in the terminal to download the necessary dependencies:
    "go mod tidy"
    
-4. Ensure that port :9991 is not already in use and that the server's firewall allows access to this port.
+4. Ensure that port :9990 is not already in use and that the server's firewall allows access to this port.
 
 5. Deploy the program in the background by running the following command:
    "nohup go run main.go > logger.log &"
