@@ -3,6 +3,17 @@ ChildTuningGoBackend is an MVC structured backend web service developed in Golan
 It handles the project's logistics and stores data by providing RESTful APIs for the front end to access.
 One should follow the following steps to deploy this project on the server.
 
+
+//preparing the database
+1. Create a database called childTuningDB first:
+mysql -u root -p
+CREATE DATABASE childTuningDB;
+exit
+
+2. Then use the sql dump on the database just created
+mysql -u root -p childTuningDB < childTuningDB.sql
+
+//deploy program
 1. Ensure that the latest version of Golang (at least go 1.20) is correctly installed on the server.
 
 2. Open backend/provider/provider.go and modify the "defaultDB" variable's value to connect to your database:
