@@ -11,7 +11,7 @@ One should follow the following steps to deploy this project on the server.
 "exit"
 
 2. Then use the sql dump on the database just created
-mysql -u root -p childTuningDB < childTuningDB.sql
+"mysql -u root -p childTuningDB < childTuningDB.sql"
 
 //deploy program
 1. Ensure that the latest version of Golang (at least go 1.20) is correctly installed on the server.
